@@ -1,0 +1,12 @@
+2023-11-14 17:07:14,728 [1] INFO Microsoft.Hosting.Lifetime.?[?] - Now listening on: http://localhost:5275
+2023-11-14 17:07:15,892 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Application started. Press Ctrl+C to shut down.
+2023-11-14 17:07:16,067 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Hosting environment: Development
+2023-11-14 17:07:16,196 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Content root path: C:\Desktop\stream training\myProject\ComplaintTicketSolution\ComplaintTicketApp\
+2023-11-14 17:41:02,054 [1] INFO Microsoft.Hosting.Lifetime.?[?] - Now listening on: http://localhost:5275
+2023-11-14 17:41:02,585 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Application started. Press Ctrl+C to shut down.
+2023-11-14 17:41:02,623 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Hosting environment: Development
+2023-11-14 17:41:02,645 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Content root path: C:\Desktop\stream training\myProject\ComplaintTicketSolution\ComplaintTicketApp\
+2023-11-14 17:45:44,424 [1] INFO Microsoft.Hosting.Lifetime.?[?] - Now listening on: http://localhost:5275
+2023-11-14 17:45:44,634 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Application started. Press Ctrl+C to shut down.
+2023-11-14 17:45:44,645 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Hosting environment: Development
+2023-11-14 17:45:44,650 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Content root path: C:\Desktop\stream training\myProject\ComplaintTicketSolution\ComplaintTicketApp\
