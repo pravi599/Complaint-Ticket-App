@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ComplaintTicketApp.Models
 {
@@ -12,6 +13,11 @@ namespace ComplaintTicketApp.Models
 
         // Additional properties for analytics
         // For example, DateRange, NumberOfComplaints, etc.
-    }
 
+        // Foreign key to Organization
+        public int OrganizationId { get; set; }
+
+        // Navigation property to Organization
+        public Organization Organization { get; set; }
+    }
 }

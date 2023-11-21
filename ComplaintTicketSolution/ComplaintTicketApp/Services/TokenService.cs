@@ -21,7 +21,8 @@ namespace ComplaintTicketApp.Services
         {
             var claims = new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.NameId,user.Username)
+                new Claim(JwtRegisteredClaimNames.NameId,user.Username),
+                new Claim("role",user.Role)
             };
             var cred = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescription = new SecurityTokenDescriptor
@@ -38,4 +39,3 @@ namespace ComplaintTicketApp.Services
 
     }
 }
-

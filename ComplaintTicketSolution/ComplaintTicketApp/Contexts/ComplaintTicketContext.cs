@@ -12,55 +12,66 @@ namespace ComplaintTicketApp.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Complaint> Complaints { get; set; }
         public DbSet<Comment> Comments { get; set; }
-        public DbSet<Attachment> Attachments { get; set; }
+        //public DbSet<Attachment> Attachments { get; set; }
         public DbSet<Priority> Priorities { get; set; }
         public DbSet<Analytics> Analytics { get; set; }
         public DbSet<Organization> Organizations { get; set; } // Added Organization DbSet
+        public DbSet<Tracking> Trackings { get; set; }
+        //public DbSet<ComplaintCategory> ComplaintCategories {  get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // User-Complaint relationship
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Complaints)
-                .WithOne(c => c.User)
+            // User-Complaint one to many relationship
+            modelBuilder.Entity<Complaint>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Complaints)
                 .HasForeignKey(c => c.Username)
-                .IsRequired();
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Complaint-Comment relationship
-            modelBuilder.Entity<Complaint>()
-                .HasMany(c => c.Comments)
-                .WithOne(c => c.Complaint)
+            // Complaint-Comment one to many relationship
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Complaint)
+                .WithMany(complaint => complaint.Comments)
                 .HasForeignKey(c => c.ComplaintId)
-                .IsRequired();
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Complaint-Attachment relationship
-            modelBuilder.Entity<Complaint>()
-                .HasMany(c => c.Attachments)
-                .WithOne(a => a.Complaint)
-                .HasForeignKey(a => a.ComplaintId)
-                .IsRequired();
 
-            // Priority-Complaint relationship
-            modelBuilder.Entity<Priority>()
-                .HasMany(p => p.Complaints)
-                .WithOne(c => c.Priority)
-                .HasForeignKey(c => c.PriorityId)
-                .IsRequired();
-
-            // Complaint-ComplaintCategory relationship
-            modelBuilder.Entity<ComplaintCategory>()
-                .HasMany(cc => cc.Complaints)
-                .WithOne(c => c.ComplaintCategory)
-                .HasForeignKey(c => c.ComplaintCategoryId)
-                .IsRequired(false);
-
-            // Comment-User relationship
+            // User-Comment one to many relationship
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.User)
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.Username)
-                .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
+
+            //
+            modelBuilder.Entity<Organization>()
+                .HasMany(o => o.AnalyticsReports) // One Organization has many Analytics
+                .WithOne(a => a.Organization)      // Each Analytics belongs to one Organization
+                .HasForeignKey(a => a.OrganizationId) // Foreign key in Analytics referring to OrganizationId
+                .OnDelete(DeleteBehavior.Cascade); // Optional: Cascade delete for Analytics when Organization is deleted
+
+            //Organization-Complaint one to many relationship
+            modelBuilder.Entity<Complaint>()
+            .HasOne(c => c.Organization)
+            .WithMany(o => o.Complaints)
+            .HasForeignKey(c => c.OrganizationId)
+            .IsRequired();
+
+            //Priority-Complaint one to many relationship
+            modelBuilder.Entity<Priority>()
+            .HasOne(p => p.Complaint)
+            .WithOne(c => c.Priority)
+            .HasForeignKey<Priority>(p => p.ComplaintId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            //Complaint-Tracking one to many relationship
+            modelBuilder.Entity<Tracking>()
+            .HasOne(t => t.Complaint)
+            .WithOne(c => c.Tracking)
+            .HasForeignKey<Tracking>(t => t.ComplaintId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
             base.OnModelCreating(modelBuilder);
 
@@ -68,3 +79,4 @@ namespace ComplaintTicketApp.Contexts
         }
     }
 }
+

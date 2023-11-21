@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "oozRLoaTaTYhUIFaubsm1SOeG/cgU8mn25qdKp+bDoJ5XYiZtaCJ0BxpJvx62L/snGMBjlE1utxlGtBoUzgUiA==",
+  "dgSpecHash": "YKUsB1FSrxlEryzJO490T3XLSUOxSrWeS3+sZEYe0N/8b/68Ux0xOaa1kIvaSTMdCaqtnMdIOSMqCBvrtdf6zA==",
   "success": true,
-  "projectFilePath": "C:\\Desktop\\stream training\\myProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj",
+  "projectFilePath": "C:\\Desktop\\MyProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\valle\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\valle\\.nuget\\packages\\log4net\\2.0.13\\log4net.2.0.13.nupkg.sha512",

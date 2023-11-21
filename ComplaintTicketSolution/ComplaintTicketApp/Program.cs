@@ -69,8 +69,22 @@ namespace ComplaintTicketApp
             builder.Logging.AddLog4Net();
 
             builder.Services.AddScoped<IRepository<string, User>, UserRepository>();
+            builder.Services.AddScoped<IRepository<int, Complaint>, ComplaintRepository>();
+            builder.Services.AddScoped<IRepository<int, Organization>, OrganizationRepository>();
+            builder.Services.AddScoped<IRepository<int, Comment>, CommentRepository>();
+            builder.Services.AddScoped<IRepository<int, Priority>, PriorityRepository>();
+            //builder.Services.AddScoped<IRepository<int, Attachment>, AttachmentRepository>();
+            //builder.Services.AddScoped<IRepository<int, ComplaintCategory>, CategoryRepository>();
+            builder.Services.AddScoped<IRepository<int, Analytics>, AnalyticsRepository>();
+            builder.Services.AddScoped<IRepository<int, Tracking>, TrackingRepository>();
+
+
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IComplaintService, ComplaintService>();
+            builder.Services.AddScoped<IOrganizationService, OrganizationService>();
+            builder.Services.AddScoped<ICommentService, CommentService>();
+            builder.Services.AddScoped<ITrackingService, TrackingService>();
 
             var app = builder.Build();
 
