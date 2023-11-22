@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ComplaintTicketApp.Exceptions;
 using ComplaintTicketApp.Interfaces;
 using ComplaintTicketApp.Models;
 using ComplaintTicketApp.Models.DTOs;
@@ -57,25 +58,18 @@ namespace ComplaintTicketApp.Services
                         UpdateDate = DateTime.Now,
                         Complaint = complaint
                     };
-                    //complaint.Priority = priority; // Establish the relationship
-                    //complaint.Tracking = tracking; // Establish the relationship
                     _priorityRepository.Add(priority);
                     _trackingRepository.Add(tracking);
                     return true;
                 }
                 else
                 {
-                    // Organization not found, handle accordingly
-                    // (e.g., throw an exception, log, etc.)
-                    Console.WriteLine("Organization not found.");
-                    return false;
+                    throw new OrganizationNotFoundException();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Log the exception for better error handling
-                Console.WriteLine($"Error adding complaint: {ex.Message}");
-                return false;
+                throw new ComplaintOperationException();
             }
         }
 
@@ -101,8 +95,7 @@ namespace ComplaintTicketApp.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting all complaints: {ex.Message}");
-                return null;
+                throw new ComplaintOperationException();
             }
         }
 
@@ -128,14 +121,12 @@ namespace ComplaintTicketApp.Services
                 }
                 else
                 {
-                    Console.WriteLine("Complaint not found.");
-                    return null;
+                    throw new ComplaintNotFoundException();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Error getting complaint by ID: {ex.Message}");
-                return null;
+                throw new ComplaintOperationException();
             }
         }
 
@@ -146,20 +137,16 @@ namespace ComplaintTicketApp.Services
                 var complaint = _complaintRepository.Delete(complaintId);
                 if (complaint != null)
                 {
-
-                    Console.WriteLine("Complaint and associated records deleted successfully");
                     return true;
                 }
                 else
                 {
-                    Console.WriteLine("Complaint not found.");
-                    return false;
+                    throw new ComplaintNotFoundException();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Error deleting complaint: {ex.Message}");
-                return false;
+                throw new ComplaintOperationException();
             }
         }
 
@@ -197,14 +184,12 @@ namespace ComplaintTicketApp.Services
                 }
                 else
                 {
-                    Console.WriteLine("Complaint not found.");
-                    return null;
+                    throw new ComplaintNotFoundException();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Error updating complaint: {ex.Message}");
-                return null;
+                throw new ComplaintOperationException();
             }
         }
     }

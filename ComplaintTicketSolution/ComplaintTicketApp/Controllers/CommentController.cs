@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*using Microsoft.AspNetCore.Mvc;
 using ComplaintTicketApp.Interfaces;
 using ComplaintTicketApp.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +7,7 @@ namespace ComplaintTicketApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // Apply authorization to the entire controller
+    [Authorize]
     public class CommentController : ControllerBase
     {
         private readonly ICommentService _commentService;
@@ -100,3 +100,4 @@ namespace ComplaintTicketApp.Controllers
         }
     }
 }
+*/

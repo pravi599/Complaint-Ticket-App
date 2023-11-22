@@ -2,6 +2,7 @@
 using ComplaintTicketApp.Interfaces;
 using ComplaintTicketApp.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using ComplaintTicketApp.Exceptions;
 
 namespace ComplaintTicketApp.Controllers
 {
@@ -10,24 +11,39 @@ namespace ComplaintTicketApp.Controllers
     public class ComplaintController : ControllerBase
     {
         private readonly IComplaintService _complaintService;
+        private readonly ILogger<ComplaintController> _logger;
 
-        public ComplaintController(IComplaintService complaintService)
+        public ComplaintController(IComplaintService complaintService, ILogger<ComplaintController> logger)
         {
             _complaintService = complaintService;
+            _logger = logger;
         }
+
 
         [Authorize(Roles = "User")]
         [HttpPost]
         public IActionResult AddComplaint([FromBody] ComplaintDTO complaintDTO)
         {
-            var result = _complaintService.Add(complaintDTO);
-
-            if (result)
+            try
             {
-                return Ok("Complaint added successfully");
-            }
+                var result = _complaintService.Add(complaintDTO);
 
-            return BadRequest("Failed to add complaint");
+                if (result)
+                {
+                    _logger.LogInformation("Complaint added successfully");
+                    return Ok(result);
+                }
+
+                return BadRequest("Failed to add complaint");
+            }
+            catch (OrganizationNotFoundException ex)
+            {
+                return NotFound($"Failed to add complaint.{ ex.Message}");
+            }
+            catch (ComplaintOperationException)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [Authorize(Roles = "User")]
@@ -40,6 +56,7 @@ namespace ComplaintTicketApp.Controllers
 
                 if (success)
                 {
+                    _logger.LogInformation("Complaint deleted");
                     return Ok("Complaint deleted successfully");
                 }
                 else
@@ -47,10 +64,12 @@ namespace ComplaintTicketApp.Controllers
                     return NotFound("Complaint not found");
                 }
             }
-            catch (Exception ex)
+           catch (ComplaintNotFoundException ex)
             {
-                // Log the exception for better error handling
-                Console.WriteLine($"Error deleting complaint: {ex.Message}");
+                return NotFound($"Failed to remove complaint.{ex.Message}");
+            }
+            catch (ComplaintOperationException)
+            {
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -62,14 +81,26 @@ namespace ComplaintTicketApp.Controllers
         [HttpPut]
         public IActionResult UpdateComplaint([FromBody] ComplaintDTO complaintDTO)
         {
-            var result = _complaintService.Update(complaintDTO);
-
-            if (result != null)
+            try
             {
+                var result = _complaintService.Update(complaintDTO);
 
-                return Ok("Complaint updated successfully");
+                if (result != null)
+                {
+                    _logger.LogInformation("Complaint updated successfully");
+                    return Ok(result);
+                }
+
+                return NotFound("Complaint not found");
             }
-            return NotFound("Complaint not found");
+            catch (ComplaintNotFoundException ex)
+            {
+                return NotFound($"Failed to remove complaint.{ex.Message}");
+            }
+            catch (ComplaintOperationException)
+            {
+                return StatusCode(500, "Internal server error");
+            }
 
         }
         [Authorize(Roles = "Admin")]
@@ -77,22 +108,42 @@ namespace ComplaintTicketApp.Controllers
         [HttpGet("{complaintId}")]
         public IActionResult GetComplaintById(int complaintId)
         {
-            var complaintDTO = _complaintService.GetComplaintById(complaintId);
-
-            if (complaintDTO != null)
+            try
             {
-                return Ok(complaintDTO);
-            }
+                var complaintDTO = _complaintService.GetComplaintById(complaintId);
 
-            return NotFound("Complaint not found");
+                if (complaintDTO != null)
+                {
+                    _logger.LogInformation("Complaint Listed with given Id");
+                    return Ok(complaintDTO);
+                }
+
+                return NotFound("Complaint not found");
+            }
+            catch (ComplaintNotFoundException ex)
+            {
+                return NotFound($"Failed to remove complaint.{ex.Message}");
+            }
+            catch (ComplaintOperationException)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
+
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult GetAllComplaints()
         {
-            var complaintDTOs = _complaintService.GetAllComplaints();
-
-            return Ok(complaintDTOs);
+            try
+            {
+                var complaintDTOs = _complaintService.GetAllComplaints();
+                _logger.LogInformation("All Complaints Listed");
+                return Ok(complaintDTOs);
+            }
+            catch (ComplaintOperationException)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }

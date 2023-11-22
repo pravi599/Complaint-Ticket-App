@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ComplaintTicketApp.Exceptions;
 using ComplaintTicketApp.Interfaces;
 using ComplaintTicketApp.Models;
 using ComplaintTicketApp.Models.DTOs;
@@ -17,13 +18,17 @@ namespace ComplaintTicketApp.Services
 
         public bool AddOrganization(OrganizationDTO organizationDTO)
         {
+            // Check for null DTO
             if (organizationDTO == null)
             {
-                // Handle null DTO
-                return false;
+                throw new NullDTOException();
+            }
+            // Check for duplicate organization name
+            if (_organizationRepository.GetAll().Any(o => o.OrganizationName == organizationDTO.OrganizationName))
+            {
+                throw new DuplicateOrganizationException();
             }
 
-            // Perform additional validation if needed
 
             var organization = new Organization
             {
@@ -31,7 +36,6 @@ namespace ComplaintTicketApp.Services
                 Description = organizationDTO.Description,
                 ContactEmail = organizationDTO.ContactEmail,
                 ContactPhone = organizationDTO.ContactPhone
-                // Map other properties as needed
             };
 
             // Add the organization to the repository
@@ -42,18 +46,13 @@ namespace ComplaintTicketApp.Services
 
         public bool RemoveOrganization(int organizationId)
         {
-            // Perform additional validation if needed
-
-            // Assuming you have a unique identifier for organizations (e.g., OrganizationId)
             var organization = _organizationRepository.GetById(organizationId);
 
             if (organization == null)
             {
                 // Handle not found organization
-                return false;
+                throw new OrganizationNotFoundException();
             }
-
-            // Perform additional validation or business logic if needed before removal
 
             // Remove the organization from the repository
             _organizationRepository.Delete(organization.OrganizationId);
@@ -63,21 +62,18 @@ namespace ComplaintTicketApp.Services
 
         public bool UpdateOrganization(OrganizationDTO organizationDTO)
         {
+            // Check for null DTO
             if (organizationDTO == null)
             {
-                // Handle null DTO
-                return false;
+                throw new NullDTOException();
             }
 
-            // Perform additional validation if needed
-
-            // Assuming you have a unique identifier for organizations (e.g., OrganizationId)
             var existingOrganization = _organizationRepository.GetById(organizationDTO.OrganizationId);
 
             if (existingOrganization == null)
             {
                 // Handle not found organization
-                return false;
+                throw new OrganizationNotFoundException();
             }
 
             // Update properties based on the DTO
@@ -85,7 +81,6 @@ namespace ComplaintTicketApp.Services
             existingOrganization.Description = organizationDTO.Description;
             existingOrganization.ContactEmail = organizationDTO.ContactEmail;
             existingOrganization.ContactPhone = organizationDTO.ContactPhone;
-            // Update other properties as needed
 
             // Perform the update operation in the repository
             _organizationRepository.Update(existingOrganization);
@@ -95,10 +90,13 @@ namespace ComplaintTicketApp.Services
 
         public OrganizationDTO GetOrganizationById(int organizationId)
         {
-            // Assuming you have a unique identifier for organizations (e.g., OrganizationId)
             var organization = _organizationRepository.GetById(organizationId);
-
-            // Map the Organization entity to an OrganizationDTO based on your application's requirements
+            if (organization == null)
+            {
+                // Handle not found organization
+                throw new OrganizationNotFoundException();
+            }
+            // Map the Organization entity to an OrganizationDTO
             var organizationDTO = MapOrganizationToDTO(organization);
 
             return organizationDTO;
@@ -106,14 +104,12 @@ namespace ComplaintTicketApp.Services
 
         public IEnumerable<OrganizationDTO> GetAllOrganizations()
         {
-            // You may need to map the Organization entities to DTOs based on your application's requirements
-            // Here, I assume you have an OrganizationDTO class with similar properties as Organization
             var organizations = _organizationRepository.GetAll();
             var organizationDTOs = MapOrganizationsToDTOs(organizations);
             return organizationDTOs;
         }
 
-        // Add mapping methods based on your application's requirements
+        // Add mapping methods
         private OrganizationDTO MapOrganizationToDTO(Organization organization)
         {
             if (organization == null)
@@ -128,14 +124,12 @@ namespace ComplaintTicketApp.Services
                 Description = organization.Description,
                 ContactEmail = organization.ContactEmail,
                 ContactPhone = organization.ContactPhone
-                // Map other properties as needed
             };
         }
 
 
         private IEnumerable<OrganizationDTO> MapOrganizationsToDTOs(IEnumerable<Organization> organizations)
         {
-            // Implement mapping logic here
             // Map properties from Organization to OrganizationDTO
             var organizationDTOs = new List<OrganizationDTO>();
             foreach (var organization in organizations)

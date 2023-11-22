@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Desktop\\MyProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj": {}
+    "C:\\Desktop\\stream training\\myProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj": {}
   },
   "projects": {
-    "C:\\Desktop\\MyProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj": {
+    "C:\\Desktop\\stream training\\myProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Desktop\\MyProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj",
+        "projectUniqueName": "C:\\Desktop\\stream training\\myProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj",
         "projectName": "ComplaintTicketApp",
-        "projectPath": "C:\\Desktop\\MyProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj",
+        "projectPath": "C:\\Desktop\\stream training\\myProject\\ComplaintTicketSolution\\ComplaintTicketApp\\ComplaintTicketApp.csproj",
         "packagesPath": "C:\\Users\\valle\\.nuget\\packages\\",
-        "outputPath": "C:\\Desktop\\MyProject\\ComplaintTicketSolution\\ComplaintTicketApp\\obj\\",
+        "outputPath": "C:\\Desktop\\stream training\\myProject\\ComplaintTicketSolution\\ComplaintTicketApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\valle\\AppData\\Roaming\\NuGet\\NuGet.Config",

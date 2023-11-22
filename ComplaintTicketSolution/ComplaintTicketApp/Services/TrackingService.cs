@@ -24,7 +24,6 @@ namespace ComplaintTicketApp.Services
                 ComplaintId = trackingDTO.ComplaintId,
                 UpdateDate = trackingDTO.UpdateDate,
                 Status = trackingDTO.Status
-                // add other properties as needed
             };
 
             var addedTracking = _trackingRepository.Add(trackingEntity);
@@ -37,7 +36,6 @@ namespace ComplaintTicketApp.Services
                     ComplaintId = addedTracking.ComplaintId,
                     UpdateDate = addedTracking.UpdateDate,
                     Status = addedTracking.Status
-                    // map other properties as needed
                 };
 
                 return addedTrackingDTO;
@@ -65,7 +63,6 @@ namespace ComplaintTicketApp.Services
                         ComplaintId = updatedTracking.ComplaintId,
                         UpdateDate = updatedTracking.UpdateDate,
                         Status = updatedTracking.Status
-                        // map other properties as needed
                     };
 
                     return updatedTrackingDTO;
@@ -87,7 +84,6 @@ namespace ComplaintTicketApp.Services
                     ComplaintId = trackingEntity.ComplaintId,
                     UpdateDate = trackingEntity.UpdateDate,
                     Status = trackingEntity.Status
-                    // map other properties as needed
                 };
 
                 return trackingDTO;
@@ -109,7 +105,6 @@ namespace ComplaintTicketApp.Services
                         ComplaintId = trackingEntity.ComplaintId,
                         UpdateDate = trackingEntity.UpdateDate,
                         Status = trackingEntity.Status
-                        // map other properties as needed
                     }).ToList();
 
                 return trackingDTOs;
