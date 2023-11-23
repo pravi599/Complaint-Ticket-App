@@ -544,3 +544,8 @@ FROM [Organizations] AS [o]
 SELECT [o].[OrganizationId], [o].[ContactEmail], [o].[ContactPhone], [o].[Description], [o].[OrganizationName]
 FROM [Organizations] AS [o]
 2023-11-22 22:02:36,449 [.NET ThreadPool Worker] INFO ComplaintTicketApp.Controllers.OrganizationController.GetAllOrganizations[144] - OrganizationController Listed
+2023-11-23 17:51:04,871 [1] INFO Microsoft.Hosting.Lifetime.?[?] - Now listening on: https://localhost:7177
+2023-11-23 17:51:05,481 [1] INFO Microsoft.Hosting.Lifetime.?[?] - Now listening on: http://localhost:5029
+2023-11-23 17:51:05,506 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Application started. Press Ctrl+C to shut down.
+2023-11-23 17:51:05,530 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Hosting environment: Development
+2023-11-23 17:51:05,543 [1] INFO Microsoft.Hosting.Lifetime.OnApplicationStarted[0] - Content root path: C:\Desktop\stream training\myProject\ComplaintTicketSolution\ComplaintTicketApp\

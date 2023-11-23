@@ -987,19 +987,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ghant\\.nuget\\packages\\": {}
+    "C:\\Users\\valle\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ghant\\Desktop\\Hexaware FSD\\Training\\ComplaintTicketApplication\\ComplaintTicketSolution\\EComplaintTicketTest\\EComplaintTicketTest.csproj",
+      "projectUniqueName": "C:\\Desktop\\stream training\\myProject\\ComplaintTicketSolution\\EComplaintTicketTest\\EComplaintTicketTest.csproj",
       "projectName": "EComplaintTicketTest",
-      "projectPath": "C:\\Users\\ghant\\Desktop\\Hexaware FSD\\Training\\ComplaintTicketApplication\\ComplaintTicketSolution\\EComplaintTicketTest\\EComplaintTicketTest.csproj",
-      "packagesPath": "C:\\Users\\ghant\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ghant\\Desktop\\Hexaware FSD\\Training\\ComplaintTicketApplication\\ComplaintTicketSolution\\EComplaintTicketTest\\obj\\",
+      "projectPath": "C:\\Desktop\\stream training\\myProject\\ComplaintTicketSolution\\EComplaintTicketTest\\EComplaintTicketTest.csproj",
+      "packagesPath": "C:\\Users\\valle\\.nuget\\packages\\",
+      "outputPath": "C:\\Desktop\\stream training\\myProject\\ComplaintTicketSolution\\EComplaintTicketTest\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ghant\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\valle\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
