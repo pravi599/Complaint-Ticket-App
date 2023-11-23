@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
+<<<<<<< HEAD
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComplaintTicketApplication", "ComplaintTicketApplication\ComplaintTicketApplication.csproj", "{280459E3-F951-471A-B613-CFC235CB6FA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EComplaintTicketTest", "EComplaintTicketTest\EComplaintTicketTest.csproj", "{F8EC2FA0-6DD5-4AF9-AB04-4A84174EAA93}"
+=======
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComplaintTicketApp", "ComplaintTicketApp\ComplaintTicketApp.csproj", "{6F90AD6E-C348-4FF2-A60B-D3DACEF0BDC6}"
+>>>>>>> 78d16ddf50a60a89c405fd4265aabb157fee45c8
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +17,30 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+<<<<<<< HEAD
+		{280459E3-F951-471A-B613-CFC235CB6FA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{280459E3-F951-471A-B613-CFC235CB6FA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{280459E3-F951-471A-B613-CFC235CB6FA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{280459E3-F951-471A-B613-CFC235CB6FA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8EC2FA0-6DD5-4AF9-AB04-4A84174EAA93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8EC2FA0-6DD5-4AF9-AB04-4A84174EAA93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8EC2FA0-6DD5-4AF9-AB04-4A84174EAA93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8EC2FA0-6DD5-4AF9-AB04-4A84174EAA93}.Release|Any CPU.Build.0 = Release|Any CPU
+=======
 		{6F90AD6E-C348-4FF2-A60B-D3DACEF0BDC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F90AD6E-C348-4FF2-A60B-D3DACEF0BDC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F90AD6E-C348-4FF2-A60B-D3DACEF0BDC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F90AD6E-C348-4FF2-A60B-D3DACEF0BDC6}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> 78d16ddf50a60a89c405fd4265aabb157fee45c8
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+<<<<<<< HEAD
+		SolutionGuid = {A5B92D44-9D18-46F9-BCAF-C74371D5CD4A}
+=======
 		SolutionGuid = {4B705C39-8A1A-4F85-B912-713D7D042666}
+>>>>>>> 78d16ddf50a60a89c405fd4265aabb157fee45c8
 	EndGlobalSection
 EndGlobal
