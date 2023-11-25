@@ -35,9 +35,9 @@ namespace ComplaintTicketApp.Repositories
 
         public IList<Organization> GetAll()
         {
-            
-                
-                if (_dbContext.Organizations.Count() == 0)
+
+
+            if (_dbContext.Organizations.Count() == 0)
                 return null;
             return _dbContext.Organizations.ToList();
         }

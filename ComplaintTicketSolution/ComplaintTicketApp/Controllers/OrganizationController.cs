@@ -32,11 +32,12 @@ namespace ComplaintTicketApp.Controllers
                 if (result)
                 {
                     _logger.LogInformation("Organization added successfully");
-                    return Ok(result);
+                    return Ok(organizationDTO);
                 }
 
                 return BadRequest("Failed to add organization");
             }
+            
             catch (NullDTOException ex)
             {
                 return BadRequest($"Failed to add organization. {ex.Message}");

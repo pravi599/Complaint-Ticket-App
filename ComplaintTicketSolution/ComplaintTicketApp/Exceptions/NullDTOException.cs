@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace ComplaintTicketApp.Exceptions
 {
     [Serializable]
-    internal class NullDTOException : Exception
+    public class NullDTOException : Exception
     { string message;
         public NullDTOException()
         {

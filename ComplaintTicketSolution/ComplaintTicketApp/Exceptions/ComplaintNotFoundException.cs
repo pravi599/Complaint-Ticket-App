@@ -3,7 +3,7 @@
 namespace ComplaintTicketApp.Exceptions
 {
     [Serializable]
-    internal class ComplaintNotFoundException : Exception
+    public class ComplaintNotFoundException : Exception
     {
         string message;
         public ComplaintNotFoundException()

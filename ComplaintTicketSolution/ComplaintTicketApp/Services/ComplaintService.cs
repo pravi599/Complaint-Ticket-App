@@ -28,169 +28,123 @@ namespace ComplaintTicketApp.Services
 
         public bool Add(ComplaintDTO complaintDTO)
         {
-            try
+            var organization = _organizationRepository.GetById(complaintDTO.OrganizationId);
+
+            if (organization != null)
             {
-                var organization = _organizationRepository.GetById(complaintDTO.OrganizationId);
-
-                if (organization != null)
+                var complaint = new Complaint
                 {
-                    var complaint = new Complaint
-                    {
-                        OrganizationId = complaintDTO.OrganizationId,
-                        OrganizationName = complaintDTO.OrganizationName,
-                        Category = complaintDTO.Category,
-                        Description = complaintDTO.Description,
-                        Username = complaintDTO.Username,
-                        FilePath = complaintDTO.FilePath
-                    };
+                    OrganizationId = complaintDTO.OrganizationId,
+                    OrganizationName = complaintDTO.OrganizationName,
+                    Category = complaintDTO.Category,
+                    Description = complaintDTO.Description,
+                    Username = complaintDTO.Username,
+                    FilePath = complaintDTO.FilePath
+                };
 
-                    _complaintRepository.Add(complaint);
+                _complaintRepository.Add(complaint);
 
-                    var priority = new Priority
-                    {
-                        Name = "Low",
-                        EscalationThreshold = 7,
-                        Complaint = complaint
-                    };
-                    var tracking = new Tracking
-                    {
-                        Status = "Open",
-                        UpdateDate = DateTime.Now,
-                        Complaint = complaint
-                    };
-                    _priorityRepository.Add(priority);
-                    _trackingRepository.Add(tracking);
-                    return true;
-                }
-                else
+                var priority = new Priority
                 {
-                    throw new OrganizationNotFoundException();
-                }
+                    Name = "Low",
+                    EscalationThreshold = 7,
+                    Complaint = complaint
+                };
+                var tracking = new Tracking
+                {
+                    Status = "Open",
+                    UpdateDate = DateTime.Now,
+                    Complaint = complaint
+                };
+                _priorityRepository.Add(priority);
+                _trackingRepository.Add(tracking);
+                return true;
             }
-            catch (Exception)
-            {
-                throw new ComplaintOperationException();
-            }
+
+            throw new OrganizationNotFoundException();
         }
 
         public IEnumerable<ComplaintDTO> GetAllComplaints()
         {
-            try
-            {
-                var complaints = _complaintRepository.GetAll();
+            var complaints = _complaintRepository.GetAll();
 
-                var complaintDTOs = complaints
-                    .Select(complaint => new ComplaintDTO
-                    {
-                        ComplaintId = complaint.ComplaintId,
-                        Category = complaint.Category,
-                        Description = complaint.Description,
-                        OrganizationId = complaint.OrganizationId,
-                        OrganizationName = complaint.OrganizationName,
-                        Username = complaint.Username,
-                        FilePath = complaint.FilePath
-                    }).ToList();
+            var complaintDTOs = complaints
+                .Select(complaint => new ComplaintDTO
+                {
+                    ComplaintId = complaint.ComplaintId,
+                    Category = complaint.Category,
+                    Description = complaint.Description,
+                    OrganizationId = complaint.OrganizationId,
+                    OrganizationName = complaint.OrganizationName,
+                    Username = complaint.Username,
+                    FilePath = complaint.FilePath
+                }).ToList();
 
-                return complaintDTOs;
-            }
-            catch (Exception ex)
-            {
-                throw new ComplaintOperationException();
-            }
+            return complaintDTOs;
         }
 
         public ComplaintDTO GetComplaintById(int complaintId)
         {
-            try
-            {
-                var complaint = _complaintRepository.GetById(complaintId);
+            var complaint = _complaintRepository.GetById(complaintId);
 
-                if (complaint != null)
-                {
-                    var complaintDTO = new ComplaintDTO
-                    {
-                        ComplaintId = complaint.ComplaintId,
-                        Category = complaint.Category,
-                        Description = complaint.Description,
-                        OrganizationId = complaint.OrganizationId,
-                        OrganizationName = complaint.OrganizationName,
-                        Username = complaint.Username,
-                        FilePath = complaint.FilePath
-                    };
-                    return complaintDTO;
-                }
-                else
-                {
-                    throw new ComplaintNotFoundException();
-                }
-            }
-            catch (Exception)
+            if (complaint != null)
             {
-                throw new ComplaintOperationException();
+                var complaintDTO = new ComplaintDTO
+                {
+                    ComplaintId = complaint.ComplaintId,
+                    Category = complaint.Category,
+                    Description = complaint.Description,
+                    OrganizationId = complaint.OrganizationId,
+                    OrganizationName = complaint.OrganizationName,
+                    Username = complaint.Username,
+                    FilePath = complaint.FilePath
+                };
+                return complaintDTO;
             }
+
+            throw new ComplaintNotFoundException();
         }
 
         public bool Remove(int complaintId)
         {
-            try
+            var complaint = _complaintRepository.Delete(complaintId);
+
+            if (complaint != null)
             {
-                var complaint = _complaintRepository.Delete(complaintId);
-                if (complaint != null)
-                {
-                    return true;
-                }
-                else
-                {
-                    throw new ComplaintNotFoundException();
-                }
+                return true;
             }
-            catch (Exception)
-            {
-                throw new ComplaintOperationException();
-            }
+
+            throw new ComplaintNotFoundException();
         }
 
         public ComplaintDTO Update(ComplaintDTO complaintDTO)
         {
-            try
+            var existingComplaint = _complaintRepository.GetById(complaintDTO.ComplaintId);
+
+            if (existingComplaint != null)
             {
-                // Retrieve the existing complaint from the repository
-                var existingComplaint = _complaintRepository.GetById(complaintDTO.ComplaintId);
+                existingComplaint.Category = complaintDTO.Category;
+                existingComplaint.Description = complaintDTO.Description;
+                existingComplaint.OrganizationId = complaintDTO.OrganizationId;
+                existingComplaint.OrganizationName = complaintDTO.OrganizationName;
+                existingComplaint.Username = complaintDTO.Username;
+                existingComplaint.FilePath = complaintDTO.FilePath;
 
-                if (existingComplaint != null)
+                _complaintRepository.Update(existingComplaint);
+
+                return new ComplaintDTO
                 {
-                    // Update the existing complaint with the new information
-                    existingComplaint.Category = complaintDTO.Category;
-                    existingComplaint.Description = complaintDTO.Description;
-                    existingComplaint.OrganizationId = complaintDTO.OrganizationId;
-                    existingComplaint.OrganizationName = complaintDTO.OrganizationName;
-                    existingComplaint.Username = complaintDTO.Username;
-                    existingComplaint.FilePath = complaintDTO.FilePath;
-
-                    // Save the changes to the repository
-                    _complaintRepository.Update(existingComplaint);
-
-                    // Return the updated complaintDTO
-                    return new ComplaintDTO
-                    {
-                        ComplaintId = existingComplaint.ComplaintId,
-                        Category = existingComplaint.Category,
-                        Description = existingComplaint.Description,
-                        OrganizationId = existingComplaint.OrganizationId,
-                        OrganizationName = existingComplaint.OrganizationName,
-                        Username = existingComplaint.Username,
-                        FilePath = existingComplaint.FilePath
-                    };
-                }
-                else
-                {
-                    throw new ComplaintNotFoundException();
-                }
+                    ComplaintId = existingComplaint.ComplaintId,
+                    Category = existingComplaint.Category,
+                    Description = existingComplaint.Description,
+                    OrganizationId = existingComplaint.OrganizationId,
+                    OrganizationName = existingComplaint.OrganizationName,
+                    Username = existingComplaint.Username,
+                    FilePath = existingComplaint.FilePath
+                };
             }
-            catch (Exception)
-            {
-                throw new ComplaintOperationException();
-            }
+
+            throw new ComplaintNotFoundException();
         }
     }
 }

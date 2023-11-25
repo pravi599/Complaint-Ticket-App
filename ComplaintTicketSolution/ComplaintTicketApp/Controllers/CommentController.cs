@@ -1,7 +1,8 @@
-﻿/*using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ComplaintTicketApp.Interfaces;
 using ComplaintTicketApp.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using ComplaintTicketApp.Services;
 
 namespace ComplaintTicketApp.Controllers
 {
@@ -11,27 +12,46 @@ namespace ComplaintTicketApp.Controllers
     public class CommentController : ControllerBase
     {
         private readonly ICommentService _commentService;
+        private readonly IComplaintService _complaintService;
 
-        public CommentController(ICommentService commentService)
+
+        public CommentController(ICommentService commentService, 
+            IComplaintService complaintService)
         {
             _commentService = commentService;
+            _complaintService = complaintService;
         }
 
         [HttpPost]
         public IActionResult AddComment([FromBody] CommentDTO commentDTO)
         {
-            // Set the user ID of the comment to the current authenticated user
-            commentDTO.Username = User.FindFirst("sub").Value;
-
-            var result = _commentService.AddComment(commentDTO);
-
-            if (result)
+            // Check if the user is authenticated
+            if (User.Identity.IsAuthenticated)
             {
-                return Ok("Comment added successfully");
+                // Set the user ID of the comment to the current authenticated user
+                //commentDTO.Username = User.FindFirst("sub")?.Value;
+
+                // Retrieve the complaint associated with the comment
+                var associatedComplaint = _complaintService.GetComplaintById(commentDTO.ComplaintId);
+
+                // Check if the user is the creator of the complaint
+                if (associatedComplaint != null && associatedComplaint.Username == commentDTO.Username)
+                {
+                    var result = _commentService.AddComment(commentDTO);
+
+                    if (result)
+                    {
+                        return Ok("Comment added successfully");
+                    }
+
+                    return BadRequest("Failed to add comment");
+                }
+                return BadRequest("You are not the creator of provided complaint Id.");
             }
 
-            return BadRequest("Failed to add comment");
+            return Forbid(); // User is not authenticated or not authorized to add a comment
         }
+
 
         [HttpDelete("{commentId}")]
         public IActionResult RemoveComment(int commentId)
@@ -100,4 +120,3 @@ namespace ComplaintTicketApp.Controllers
         }
     }
 }
-*/

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ComplaintTicketApp.Exceptions;
 using ComplaintTicketApp.Interfaces;
 using ComplaintTicketApp.Models;
 using ComplaintTicketApp.Models.DTOs;
@@ -11,65 +12,85 @@ namespace ComplaintTicketApp.Services
     public class TrackingService : ITrackingService
     {
         private readonly IRepository<int, Tracking> _trackingRepository;
+        private readonly IRepository<int, Complaint> _complaintRepository;
 
-        public TrackingService(IRepository<int, Tracking> trackingRepository)
+        public TrackingService(
+            IRepository<int, Tracking> trackingRepository,
+            IRepository<int, Complaint> complaintRepository)
         {
             _trackingRepository = trackingRepository;
+            _complaintRepository = complaintRepository;
         }
 
         public TrackingDTO AddTracking(TrackingDTO trackingDTO)
         {
-            var trackingEntity = new Tracking
+            try
             {
-                ComplaintId = trackingDTO.ComplaintId,
-                UpdateDate = trackingDTO.UpdateDate,
-                Status = trackingDTO.Status
-            };
-
-            var addedTracking = _trackingRepository.Add(trackingEntity);
-
-            if (addedTracking != null)
-            {
-                var addedTrackingDTO = new TrackingDTO
+                var trackingEntity = new Tracking
                 {
-                    TrackingId = addedTracking.TrackingId,
-                    ComplaintId = addedTracking.ComplaintId,
-                    UpdateDate = addedTracking.UpdateDate,
-                    Status = addedTracking.Status
+                    ComplaintId = trackingDTO.ComplaintId,
+                    UpdateDate = trackingDTO.UpdateDate,
+                    Status = trackingDTO.Status
                 };
 
-                return addedTrackingDTO;
-            }
+                var addedTracking = _trackingRepository.Add(trackingEntity);
 
-            return null;
+                if (addedTracking != null)
+                {
+                    var addedTrackingDTO = new TrackingDTO
+                    {
+                        TrackingId = addedTracking.TrackingId,
+                        ComplaintId = addedTracking.ComplaintId,
+                        UpdateDate = addedTracking.UpdateDate,
+                        Status = addedTracking.Status
+                    };
+
+                    return addedTrackingDTO;
+                }
+
+                throw new TrackingAddException();
+            }
+            catch (Exception)
+            {
+                throw new TrackingOperationException();
+            }
         }
 
         public TrackingDTO UpdateTrackingStatus(int trackingId, string status)
         {
-            var trackingEntity = _trackingRepository.GetById(trackingId);
-
-            if (trackingEntity != null)
+            try
             {
-                trackingEntity.Status = status;
-                trackingEntity.UpdateDate = DateTime.Now;
+                var trackingEntity = _trackingRepository.GetById(trackingId);
 
-                var updatedTracking = _trackingRepository.Update(trackingEntity);
-
-                if (updatedTracking != null)
+                if (trackingEntity != null)
                 {
-                    var updatedTrackingDTO = new TrackingDTO
+                    trackingEntity.Status = status;
+                    trackingEntity.UpdateDate = DateTime.Now;
+
+                    var updatedTracking = _trackingRepository.Update(trackingEntity);
+
+                    if (updatedTracking != null)
                     {
-                        TrackingId = updatedTracking.TrackingId,
-                        ComplaintId = updatedTracking.ComplaintId,
-                        UpdateDate = updatedTracking.UpdateDate,
-                        Status = updatedTracking.Status
-                    };
+                        var updatedTrackingDTO = new TrackingDTO
+                        {
+                            TrackingId = updatedTracking.TrackingId,
+                            ComplaintId = updatedTracking.ComplaintId,
+                            UpdateDate = updatedTracking.UpdateDate,
+                            Status = updatedTracking.Status
+                        };
 
-                    return updatedTrackingDTO;
+                        return updatedTrackingDTO;
+                    }
+
+                    throw new TrackingUpdateException();
                 }
-            }
 
-            return null;
+                throw new TrackingNotFoundException();
+            }
+            catch (Exception)
+            {
+                throw new TrackingOperationException();
+            }
         }
 
         public TrackingDTO GetTrackingById(int trackingId)
@@ -89,7 +110,7 @@ namespace ComplaintTicketApp.Services
                 return trackingDTO;
             }
 
-            return null;
+            throw new TrackingNotFoundException();
         }
 
         public IList<TrackingDTO> GetAllTrackings()
@@ -110,14 +131,71 @@ namespace ComplaintTicketApp.Services
                 return trackingDTOs;
             }
 
-            return null;
+            throw new TrackingNotFoundException();
         }
 
         public bool RemoveTracking(int trackingId)
         {
             var removedTracking = _trackingRepository.Delete(trackingId);
 
-            return removedTracking != null;
+            if (removedTracking != null)
+            {
+                return true;
+            }
+
+            throw new TrackingNotFoundException();
+        }
+
+        public TrackingDTO GetTrackingByComplaintId(int complaintId)
+        {
+            var trackingEntity = _trackingRepository.GetAll()
+                .FirstOrDefault(tracking => tracking.ComplaintId == complaintId);
+
+            if (trackingEntity != null)
+            {
+                var trackingDTO = new TrackingDTO
+                {
+                    TrackingId = trackingEntity.TrackingId,
+                    ComplaintId = trackingEntity.ComplaintId,
+                    UpdateDate = trackingEntity.UpdateDate,
+                    Status = trackingEntity.Status
+                };
+
+                return trackingDTO;
+            }
+
+            throw new TrackingNotFoundException();
+        }
+
+        public TrackingDTO UpdateTrackingStatusByComplaintId(int complaintId, string status)
+        {
+            var trackingEntity = _trackingRepository.GetAll()
+                .FirstOrDefault(tracking => tracking.ComplaintId == complaintId);
+
+            if (trackingEntity != null)
+            {
+                trackingEntity.Status = status;
+                trackingEntity.UpdateDate = DateTime.Now;
+
+                var updatedTracking = _trackingRepository.Update(trackingEntity);
+
+                if (updatedTracking != null)
+                {
+                    var updatedTrackingDTO = new TrackingDTO
+                    {
+                        TrackingId = updatedTracking.TrackingId,
+                        ComplaintId = updatedTracking.ComplaintId,
+                        UpdateDate = updatedTracking.UpdateDate,
+                        Status = updatedTracking.Status
+                    };
+
+                    return updatedTrackingDTO;
+                }
+
+                throw new TrackingUpdateException();
+            }
+
+            throw new ComplaintNotFoundException();
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace ComplaintTicketApp.Exceptions
 {
     [Serializable]
-    internal class OrganizationNotFoundException : Exception
+    public class OrganizationNotFoundException : Exception
     {
         string message;
         public OrganizationNotFoundException()

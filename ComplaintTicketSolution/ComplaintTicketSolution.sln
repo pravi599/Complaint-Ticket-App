@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EComplaintTicketTest", "EComplaintTicketTest\EComplaintTicketTest.csproj", "{F8EC2FA0-6DD5-4AF9-AB04-4A84174EAA93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComplaintTicketTest", "EComplaintTicketTest\ComplaintTicketTest.csproj", "{F8EC2FA0-6DD5-4AF9-AB04-4A84174EAA93}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComplaintTicketApp", "ComplaintTicketApp\ComplaintTicketApp.csproj", "{6F90AD6E-C348-4FF2-A60B-D3DACEF0BDC6}"
 EndProject

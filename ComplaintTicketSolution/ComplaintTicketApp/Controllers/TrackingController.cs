@@ -1,119 +1,170 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ComplaintTicketApp.Interfaces;
 using ComplaintTicketApp.Models.DTOs;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using ComplaintTicketApp.Exceptions;
 
 namespace ComplaintTicketApp.Controllers
 {
-    /// <summary>
-    /// Controller for managing tracking information.
-    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class TrackingController : ControllerBase
     {
         private readonly ITrackingService _trackingService;
+        private readonly ILogger<TrackingController> _logger;
 
-        public TrackingController(ITrackingService trackingService)
+        public TrackingController(ITrackingService trackingService, ILogger<TrackingController> logger)
         {
-            _trackingService = trackingService ?? throw new ArgumentNullException(nameof(trackingService));
+            _trackingService = trackingService;
+            _logger = logger;
         }
 
-        /// <summary>
-        /// Adds a new tracking entry.
-        /// </summary>
-        /// <param name="trackingDTO">The tracking information to add.</param>
-        /// <returns>The added tracking information.</returns>
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
         public IActionResult AddTracking([FromBody] TrackingDTO trackingDTO)
         {
-            var result = _trackingService.AddTracking(trackingDTO);
-
-            if (result != null)
+            try
             {
-                return Ok(result);
-            }
+                var result = _trackingService.AddTracking(trackingDTO);
 
-            return BadRequest("Failed to add tracking information.");
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+
+                _logger.LogWarning("Failed to add tracking information.");
+                return BadRequest("Failed to add tracking information.");
+            }
+            catch (TrackingAddException ex)
+            {
+                _logger.LogError(ex, "Error adding tracking information.");
+                return StatusCode(500, "Internal server error");
+            }
+            catch (TrackingOperationException ex)
+            {
+                _logger.LogError(ex, "Error performing tracking operation.");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
-        /// <summary>
-        /// Updates the status of a tracking entry.
-        /// </summary>
-        /// <param name="trackingId">The ID of the tracking entry to update.</param>
-        /// <param name="status">The new status.</param>
-        /// <returns>The updated tracking information.</returns>
         [HttpPut("{trackingId}/status")]
         [Authorize(Roles = "User,Admin")]
         public IActionResult UpdateTrackingStatus(int trackingId, [FromBody] string status)
         {
-            var result = _trackingService.UpdateTrackingStatus(trackingId, status);
-
-            if (result != null)
+            try
             {
-                return Ok(result);
-            }
+                var result = _trackingService.UpdateTrackingStatus(trackingId, status);
 
-            return NotFound("Tracking entry not found.");
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+
+                _logger.LogWarning("Tracking entry not found.");
+                return NotFound("Tracking entry not found.");
+            }
+            catch (TrackingUpdateException ex)
+            {
+                _logger.LogError(ex, "Error updating tracking status.");
+                return StatusCode(500, "Internal server error");
+            }
+            catch (TrackingNotFoundException ex)
+            {
+                _logger.LogError(ex, "Tracking entry not found.");
+                return NotFound("Tracking entry not found.");
+            }
+            catch (TrackingOperationException ex)
+            {
+                _logger.LogError(ex, "Error performing tracking operation.");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
-        /// <summary>
-        /// Gets tracking information by ID.
-        /// </summary>
-        /// <param name="trackingId">The ID of the tracking entry to retrieve.</param>
-        /// <returns>The tracking information.</returns>
         [HttpGet("{trackingId}")]
         [Authorize(Roles = "User,Admin")]
         public IActionResult GetTrackingById(int trackingId)
         {
-            var trackingDTO = _trackingService.GetTrackingById(trackingId);
-
-            if (trackingDTO != null)
+            try
             {
-                return Ok(trackingDTO);
-            }
+                var trackingDTO = _trackingService.GetTrackingById(trackingId);
 
-            return NotFound("Tracking entry not found.");
+                if (trackingDTO != null)
+                {
+                    return Ok(trackingDTO);
+                }
+
+                _logger.LogWarning("Tracking entry not found.");
+                return NotFound("Tracking entry not found.");
+            }
+            catch (TrackingNotFoundException ex)
+            {
+                _logger.LogError(ex, "Tracking entry not found.");
+                return NotFound("Tracking entry not found.");
+            }
+            catch (TrackingOperationException ex)
+            {
+                _logger.LogError(ex, "Error performing tracking operation.");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
-        /// <summary>
-        /// Gets all tracking entries.
-        /// </summary>
-        /// <returns>A list of tracking information.</returns>
         [HttpGet]
         [Authorize(Roles = "User,Admin")]
         public IActionResult GetAllTrackings()
         {
-            var trackingDTOs = _trackingService.GetAllTrackings();
-
-            if (trackingDTOs != null)
+            try
             {
-                return Ok(trackingDTOs);
-            }
+                var trackingDTOs = _trackingService.GetAllTrackings();
 
-            return NotFound("No tracking entries found.");
+                if (trackingDTOs != null)
+                {
+                    return Ok(trackingDTOs);
+                }
+
+                _logger.LogWarning("No tracking entries found.");
+                return NotFound("No tracking entries found.");
+            }
+            catch (TrackingNotFoundException ex)
+            {
+                _logger.LogError(ex, "No tracking entries found.");
+                return NotFound("No tracking entries found.");
+            }
+            catch (TrackingOperationException ex)
+            {
+                _logger.LogError(ex, "Error performing tracking operation.");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
-        /// <summary>
-        /// Removes a tracking entry by ID.
-        /// </summary>
-        /// <param name="trackingId">The ID of the tracking entry to remove.</param>
-        /// <returns>True if the tracking entry was removed successfully; otherwise, false.</returns>
         [HttpDelete("{trackingId}")]
         [Authorize(Roles = "User,Admin")]
         public IActionResult RemoveTracking(int trackingId)
         {
-            var result = _trackingService.RemoveTracking(trackingId);
-
-            if (result)
+            try
             {
-                return Ok("Tracking entry removed successfully");
-            }
+                var result = _trackingService.RemoveTracking(trackingId);
 
-            return NotFound("Tracking entry not found.");
+                if (result)
+                {
+                    return Ok("Tracking entry removed successfully");
+                }
+
+                _logger.LogWarning("Tracking entry not found.");
+                return NotFound("Tracking entry not found.");
+            }
+            catch (TrackingNotFoundException ex)
+            {
+                _logger.LogError(ex, "Tracking entry not found.");
+                return NotFound("Tracking entry not found.");
+            }
+            catch (TrackingOperationException ex)
+            {
+                _logger.LogError(ex, "Error performing tracking operation.");
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }

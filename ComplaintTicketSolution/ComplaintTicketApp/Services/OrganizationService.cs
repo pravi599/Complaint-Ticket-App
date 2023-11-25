@@ -24,7 +24,10 @@ namespace ComplaintTicketApp.Services
                 throw new NullDTOException();
             }
             // Check for duplicate organization name
-            if (_organizationRepository.GetAll().Any(o => o.OrganizationName == organizationDTO.OrganizationName))
+            var existingOrganization = _organizationRepository.GetAll()
+                .FirstOrDefault(o => o.OrganizationName == organizationDTO.OrganizationName);
+
+            if (existingOrganization != null)
             {
                 throw new DuplicateOrganizationException();
             }
