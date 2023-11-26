@@ -11,5 +11,7 @@ namespace ComplaintTicketApp.Interfaces
         TrackingDTO GetTrackingById(int trackingId);
         IList<TrackingDTO> GetAllTrackings();
         bool RemoveTracking(int trackingId);
+        TrackingDTO UpdateTrackingStatusByComplaintId(int complaintId, string status);
+        TrackingDTO GetTrackingByComplaintId(int complaintId);
     }
 }

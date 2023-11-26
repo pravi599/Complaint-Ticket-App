@@ -8,7 +8,7 @@ namespace ComplaintTicketApp.Exceptions
     { string message;
         public NullDTOException()
         {
-            message = "OrganizationDTO cannot be null.";
+            message = "DTO cannot be null.";
         }
         public override string Message => message;
     }

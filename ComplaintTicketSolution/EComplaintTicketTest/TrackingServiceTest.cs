@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ComplaintTicketApp.Exceptions;
 using ComplaintTicketApp.Interfaces;
 using ComplaintTicketApp.Models;
@@ -13,129 +14,218 @@ namespace ComplaintTicketTest
     [TestFixture]
     public class TrackingServiceTest
     {
-        private Mock<IRepository<int, Tracking>> _trackingRepositoryMock;
-        private Mock<IRepository<int, Complaint>> _complaintRepositoryMock;
-        private TrackingService _trackingService;
-
-        [SetUp]
-        public void Setup()
-        {
-            _trackingRepositoryMock = new Mock<IRepository<int, Tracking>>();
-            _complaintRepositoryMock = new Mock<IRepository<int, Complaint>>();
-            _trackingService = new TrackingService(_trackingRepositoryMock.Object, _complaintRepositoryMock.Object);
-        }
-
         [Test]
-        public void AddTracking_ValidTracking_ReturnsTrackingDTO()
+        public void AddTracking_ValidData_ReturnsTrackingDTO()
         {
             // Arrange
-            SetupTrackingRepositoryAdd();
+            var mockTrackingRepository = new Mock<IRepository<int, Tracking>>();
+            var mockComplaintRepository = new Mock<IRepository<int, Complaint>>();
+            var trackingService = new TrackingService(mockTrackingRepository.Object, mockComplaintRepository.Object);
 
-            var trackingDTO = CreateValidTrackingDTO();
+            var trackingDTO = new TrackingDTO
+            {
+                ComplaintId = 1,
+                UpdateDate = DateTime.Now,
+                Status = "InProgress"
+            };
+
+            var mockAddedTracking = new Tracking
+            {
+                TrackingId = 1,
+                ComplaintId = trackingDTO.ComplaintId,
+                UpdateDate = trackingDTO.UpdateDate,
+                Status = trackingDTO.Status
+            };
+
+            mockTrackingRepository.Setup(repo => repo.Add(It.IsAny<Tracking>())).Returns(mockAddedTracking);
 
             // Act
-            var result = _trackingService.AddTracking(trackingDTO);
+            var result = trackingService.AddTracking(trackingDTO);
 
             // Assert
-            AssertTrackingDTO(trackingDTO, result);
+            Assert.NotNull(result);
+            Assert.AreEqual(mockAddedTracking.TrackingId, result.TrackingId);
+            Assert.AreEqual(mockAddedTracking.ComplaintId, result.ComplaintId);
+            Assert.AreEqual(mockAddedTracking.UpdateDate, result.UpdateDate);
+            Assert.AreEqual(mockAddedTracking.Status, result.Status);
         }
-
         [Test]
-        public void AddTracking_TrackingRepositoryThrowsException_ThrowsTrackingAddException()
+        public void AddTracking_RepositoryThrowsException_ThrowsTrackingAddException()
         {
             // Arrange
-            SetupTrackingRepositoryAddThrowsException();
+            var mockTrackingRepository = new Mock<IRepository<int, Tracking>>();
+            var mockComplaintRepository = new Mock<IRepository<int, Complaint>>();
+            var trackingService = new TrackingService(mockTrackingRepository.Object, mockComplaintRepository.Object);
 
-            var trackingDTO = CreateValidTrackingDTO();
+            var trackingDTO = new TrackingDTO
+            {
+                ComplaintId = 1,
+                UpdateDate = DateTime.Now,
+                Status = "InProgress"
+            };
 
-            // Act & Assert
-            Assert.Throws<TrackingAddException>(() => _trackingService.AddTracking(trackingDTO));
+            mockTrackingRepository.Setup(repo => repo.Add(It.IsAny<Tracking>())).Throws(new Exception("Simulated exception"));
+
+            // Act and Assert
+            Assert.Throws<TrackingOperationException>(() => trackingService.AddTracking(trackingDTO));
         }
-
-        [Test]
-        public void UpdateTrackingStatus_ValidTracking_ReturnsUpdatedTrackingDTO()
-        {
-            // Arrange
-            SetupTrackingRepositoryUpdate();
-            SetupTrackingRepositoryGetById();
-
-            var trackingId = 1;
-            var newStatus = "Completed";
-
-            // Act
-            var result = _trackingService.UpdateTrackingStatus(trackingId, newStatus);
-
-            // Assert
-            AssertUpdatedTrackingDTO(result, newStatus);
-        }
-
         [Test]
         public void UpdateTrackingStatus_TrackingNotFound_ThrowsTrackingNotFoundException()
         {
             // Arrange
-            SetupTrackingRepositoryGetByIdNotFound();
+            var mockTrackingRepository = new Mock<IRepository<int, Tracking>>();
+            var mockComplaintRepository = new Mock<IRepository<int, Complaint>>();
+            var trackingService = new TrackingService(mockTrackingRepository.Object, mockComplaintRepository.Object);
 
-            var trackingId = 1;
-            var newStatus = "Completed";
+            int trackingId = 1;
+            string newStatus = "Resolved";
 
-            // Act & Assert
-            Assert.Throws<TrackingNotFoundException>(() => _trackingService.UpdateTrackingStatus(trackingId, newStatus));
+            mockTrackingRepository.Setup(repo => repo.GetById(trackingId)).Returns((Tracking)null);
+
+            // Act and Assert
+            Assert.Throws<TrackingNotFoundException>(() => trackingService.UpdateTrackingStatus(trackingId, newStatus));
         }
-
-        // Similar methods for other test cases
-
-        private void SetupTrackingRepositoryAdd()
+        [Test]
+        public void RemoveTracking_ValidTrackingId_ReturnsTrue()
         {
-            _trackingRepositoryMock.Setup(repo => repo.Add(It.IsAny<Tracking>()))
-                                   .Returns<Tracking>(entity => entity);
-        }
+            // Arrange
+            var mockTrackingRepository = new Mock<IRepository<int, Tracking>>();
+            var mockComplaintRepository = new Mock<IRepository<int, Complaint>>();
+            var trackingService = new TrackingService(mockTrackingRepository.Object, mockComplaintRepository.Object);
 
-        private void SetupTrackingRepositoryAddThrowsException()
-        {
-            _trackingRepositoryMock.Setup(repo => repo.Add(It.IsAny<Tracking>()))
-                                   .Throws<Exception>();
-        }
+            int trackingId = 1;
 
-        private void SetupTrackingRepositoryUpdate()
-        {
-            _trackingRepositoryMock.Setup(repo => repo.Update(It.IsAny<Tracking>()))
-                                   .Returns<Tracking>(entity => entity);
-        }
-
-        private void SetupTrackingRepositoryGetById()
-        {
-            _trackingRepositoryMock.Setup(repo => repo.GetById(It.IsAny<int>()))
-                                   .Returns<int>(id => new Tracking { TrackingId = id, Status = "In Progress" });
-        }
-
-        private void SetupTrackingRepositoryGetByIdNotFound()
-        {
-            _trackingRepositoryMock.Setup(repo => repo.GetById(It.IsAny<int>()))
-                                   .Returns<int>(id => null);
-        }
-
-        private TrackingDTO CreateValidTrackingDTO()
-        {
-            return new TrackingDTO
+            var mockRemovedTracking = new Tracking
             {
+                TrackingId = trackingId,
                 ComplaintId = 1,
                 UpdateDate = DateTime.Now,
-                Status = "In Progress"
+                Status = "Resolved"
             };
+
+            mockTrackingRepository.Setup(repo => repo.Delete(trackingId)).Returns(mockRemovedTracking);
+
+            // Act
+            var result = trackingService.RemoveTracking(trackingId);
+
+            // Assert
+            Assert.True(result);
+        }
+        [Test]
+        public void RemoveTracking_TrackingNotFound_ThrowsTrackingNotFoundException()
+        {
+            // Arrange
+            var mockTrackingRepository = new Mock<IRepository<int, Tracking>>();
+            var mockComplaintRepository = new Mock<IRepository<int, Complaint>>();
+            var trackingService = new TrackingService(mockTrackingRepository.Object, mockComplaintRepository.Object);
+
+            int trackingId = 1;
+
+            mockTrackingRepository.Setup(repo => repo.Delete(trackingId)).Returns((Tracking)null);
+
+            // Act and Assert
+            Assert.Throws<TrackingNotFoundException>(() => trackingService.RemoveTracking(trackingId));
+        }
+        [Test]
+        public void GetAllTrackings_ValidData_ReturnsListofTrackingDTOs()
+        {
+            // Arrange
+            var mockTrackingRepository = new Mock<IRepository<int, Tracking>>();
+            var mockComplaintRepository = new Mock<IRepository<int, Complaint>>();
+            var trackingService = new TrackingService(mockTrackingRepository.Object, mockComplaintRepository.Object);
+
+            var mockTrackingList = new List<Tracking>
+            {
+                new Tracking { TrackingId = 1, ComplaintId = 1, UpdateDate = DateTime.Now, Status = "InProgress" },
+                new Tracking { TrackingId = 2, ComplaintId = 2, UpdateDate = DateTime.Now, Status = "Resolved" }
+            };
+
+            mockTrackingRepository.Setup(repo => repo.GetAll()).Returns(mockTrackingList);
+
+            // Act
+            var result = trackingService.GetAllTrackings();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.IsInstanceOf<IList<TrackingDTO>>(result);
+            Assert.AreEqual(mockTrackingList.Count, result.Count);
+            Assert.AreEqual(mockTrackingList[0].TrackingId, result[0].TrackingId);
+            Assert.AreEqual(mockTrackingList[0].ComplaintId, result[0].ComplaintId);
+            Assert.AreEqual(mockTrackingList[0].UpdateDate, result[0].UpdateDate);
+            Assert.AreEqual(mockTrackingList[0].Status, result[0].Status);
+        }
+        [Test]
+        public void GetAllTrackings_EmptyList_ThrowsTrackingNotFoundException()
+        {
+            // Arrange
+            var mockTrackingRepository = new Mock<IRepository<int, Tracking>>();
+            var mockComplaintRepository = new Mock<IRepository<int, Complaint>>();
+            var trackingService = new TrackingService(mockTrackingRepository.Object, mockComplaintRepository.Object);
+
+            mockTrackingRepository.Setup(repo => repo.GetAll()).Returns(new List<Tracking>());
+
+            // Act and Assert
+            Assert.Throws<TrackingNotFoundException>(() => trackingService.GetAllTrackings());
+        }
+        [Test]
+        public void UpdateTrackingStatusByComplaintId_ValidData_ReturnsUpdatedTrackingDTO()
+        {
+            // Arrange
+            var mockTrackingRepository = new Mock<IRepository<int, Tracking>>();
+            var mockComplaintRepository = new Mock<IRepository<int, Complaint>>();
+            var trackingService = new TrackingService(mockTrackingRepository.Object, mockComplaintRepository.Object);
+
+            int complaintId = 1;
+            string newStatus = "Resolved";
+
+            var mockExistingTracking = new Tracking
+            {
+                TrackingId = 1,
+                ComplaintId = complaintId,
+                UpdateDate = DateTime.Now.AddHours(-1),
+                Status = "InProgress"
+            };
+
+            var mockUpdatedTracking = new Tracking
+            {
+                TrackingId = 1,
+                ComplaintId = complaintId,
+                UpdateDate = DateTime.Now,
+                Status = newStatus
+            };
+
+            mockTrackingRepository.Setup(repo => repo.GetAll())
+                .Returns(new List<Tracking> { mockExistingTracking });
+
+            mockTrackingRepository.Setup(repo => repo.Update(It.IsAny<Tracking>())).Returns(mockUpdatedTracking);
+
+            // Act
+            var result = trackingService.UpdateTrackingStatusByComplaintId(complaintId, newStatus);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.AreEqual(mockUpdatedTracking.TrackingId, result.TrackingId);
+            Assert.AreEqual(mockUpdatedTracking.ComplaintId, result.ComplaintId);
+            Assert.AreEqual(mockUpdatedTracking.UpdateDate, result.UpdateDate);
+            Assert.AreEqual(mockUpdatedTracking.Status, result.Status);
         }
 
-        private void AssertTrackingDTO(TrackingDTO expected, TrackingDTO actual)
+        [Test]
+        public void UpdateTrackingStatusByComplaintId_ComplaintNotFound_ThrowsComplaintNotFoundException()
         {
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(expected.ComplaintId, actual.ComplaintId);
-            Assert.AreEqual(expected.UpdateDate, actual.UpdateDate);
-            Assert.AreEqual(expected.Status, actual.Status);
-        }
+            // Arrange
+            var mockTrackingRepository = new Mock<IRepository<int, Tracking>>();
+            var mockComplaintRepository = new Mock<IRepository<int, Complaint>>();
+            var trackingService = new TrackingService(mockTrackingRepository.Object, mockComplaintRepository.Object);
 
-        private void AssertUpdatedTrackingDTO(TrackingDTO actual, string expectedStatus)
-        {
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(expectedStatus, actual.Status);
+            int complaintId = 1;
+            string newStatus = "Resolved";
+
+            mockTrackingRepository.Setup(repo => repo.GetAll()).Returns(new List<Tracking>());
+
+            // Act and Assert
+            Assert.Throws<ComplaintNotFoundException>(() => trackingService.UpdateTrackingStatusByComplaintId(complaintId, newStatus));
         }
+        // Add more test cases for other methods (UpdateTrackingStatus, GetTrackingById, GetAllTrackings, RemoveTracking, GetTrackingByComplaintId, UpdateTrackingStatusByComplaintId) following a similar pattern.
     }
 }

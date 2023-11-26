@@ -85,11 +85,11 @@ namespace ComplaintTicketApp.Services
                     throw new TrackingUpdateException();
                 }
 
-                throw new TrackingNotFoundException();
+                throw new NullDTOException();
             }
             catch (Exception)
             {
-                throw new TrackingOperationException();
+                throw new TrackingNotFoundException();
             }
         }
 

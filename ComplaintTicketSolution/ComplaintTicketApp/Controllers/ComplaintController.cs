@@ -27,7 +27,7 @@ public class ComplaintController : ControllerBase
         try
         {
             var result = _complaintService.Add(complaintDTO);
-            return Ok(result);
+            return Ok(complaintDTO);
         }
         catch (OrganizationNotFoundException ex)
         {
